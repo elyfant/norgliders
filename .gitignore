@@ -1,0 +1,24 @@
+# Environment variables / secrets
+.env
+.env.*
+*.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary / swap files
+*.tmp
+*.swp
+*~
+
+# Machine-local symlinks to sibling projects (absolute paths, won't resolve
+# on another machine/checkout)
+.claude/rules/
