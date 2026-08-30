@@ -31,7 +31,7 @@ UI layer on top of OGDB for daily team use — mission/glider/sensor lookups. Al
 Dockserver/basestation landing raw glider files off Freewave/Iridium — directory structure, naming convention, retention policy, failure detection (disk full, silent callback failures).
 
 - **Status:** Not yet formalized as its own system. SFMC connection/event subscription + rsync raw mirror already built as part of (4)'s repo.
-- **Repo:** [`~/projects/ogdp`](https://github.com/elyfant/ogdp)
+- **Repo:** [`~/projects/slocum_data_processing`](https://github.com/elyfant/slocum_data_processing)
 - **Feeds:** NRT Processing (4)
 
 ### 4. Near-Real-Time Data Processing
@@ -39,14 +39,14 @@ Dockserver/basestation landing raw glider files off Freewave/Iridium — directo
 - **Slocum:** to build — pipeline using PyGlider + IOOS QC toolbox
 - **Output:** OG1-format NetCDF files → delivered to ERDDAP (6)
 - **Status:** In active development (Slocum side). Goal is a platform-agnostic final data product, not a Slocum-only one.
-- **Repo:** [`~/projects/ogdp`](https://github.com/elyfant/ogdp)
+- **Repo:** [`~/projects/slocum_data_processing`](https://github.com/elyfant/slocum_data_processing)
 - **Depends on:** Raw Data Ingestion (3)
 
 ### 5. Delayed-Mode Processing
 - **Seaglider:** done, existing toolset in good shape.
 - **Slocum:** to build — same PyGlider + IOOS QC toolchain as (4), delayed-mode QC pass.
 - **Status:** Seaglider done, Slocum not started.
-- **Repo:** [`~/projects/ogdp`](https://github.com/elyfant/ogdp) (shared with 4)
+- **Repo:** [`~/projects/slocum_data_processing`](https://github.com/elyfant/slocum_data_processing) (shared with 4)
 
 ### 6. ERDDAP Server
 Data serving layer for glider mission datasets.
@@ -110,3 +110,4 @@ _Add an entry whenever the map changes shape — new system, re-scoped ownership
 
 - 2026-08-24 — Initial map drafted. Ordering finalized: OGDB → Portal → Raw Ingestion → NRT Processing → Delayed Processing → ERDDAP → Visualization → SOPs. Calibration scheduling assigned to Portal. Auth flagged for later.
 - 2026-08-24 — Repo names/links resolved against actual GitHub repos: systems 3/4/5 all live in `ogdp` (the Slocum pipeline project); system 6 identified as the existing `norgliders-ERDDAP` repo; systems 7/8 confirmed to have no repo yet.
+- 2026-08-26 — `ogdp` renamed to `slocum_data_processing` (too easily confused with `OGDB`). Its `erddap/` ingest module (already moved to `norgliders-ERDDAP/ingest/` in a prior session) removed as a leftover. Systems 4/5 given a shared processing-core architecture — see [decisions/0002](decisions/0002-shared-nrt-delayed-processing-core.md).

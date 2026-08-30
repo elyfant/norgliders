@@ -17,7 +17,7 @@ This repo is the facility-level planning and oversight layer for Fiona's Ocean G
 The other facility repos are cloned as siblings to this directory:
 - `../OGDB/` — OGDB core database
 - `../OGDB-portal/` — OGDB Portal UI
-- `../ogdp/` — Slocum near-real-time + delayed-mode processing pipeline (covers system map items 3, 4, 5)
+- `../slocum_data_processing/` — Slocum near-real-time + delayed-mode processing pipeline (covers system map items 3, 4, 5)
 - `../norgliders-ERDDAP/` — ERDDAP data-serving layer (system map item 6)
 - (add others as they're created — items 7 Visualization and 8 SOPs have no repo yet)
 
