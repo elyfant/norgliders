@@ -3,7 +3,14 @@
 Explicit contracts between systems — file formats, paths, IDs, schemas that more than one repo relies on. When one side changes, check this file for what else breaks.
 
 ## OGDB ↔ NRT/Delayed-Mode Processing
-- Mission metadata (mission_id, glider_id) referenced by processing scripts — **format/location TBD**. Decide: does PyGlider deployment YAML get generated from OGDB, or maintained separately and just cross-referenced by ID?
+- **RESOLVED (2026-09-08, [decision 0003](decisions/0003-ogdb-generated-deployment-config.md)):** the pyglider `deployment.yml` is **generated from OGDB per processing run** and written into the mission's data folder (provenance-stamped). It is not hand-maintained in the repo. `slocum_data_processing.processing.config.resolve(mission_number)` is the generator.
+- **Contract:**
+  - The processing script locates the mission folder by globbing `<data-root>/<NNN>-*` (the mission-number prefix). `missions.internal_data_path` is **not** reliable for this (inconsistent / half-populated).
+  - `resolve()` reads: `norglider_missions` + `missions` FK ids; `asset_glider_details` + `assets` + `platforms`/NVS B76; science payload via the recursive `asset_assignments` walk at `launch_date`; latest `asset_{ct,do,eco}_sensor_cal` ≤ `launch_date`; `projects.funder`/`fund_number`.
+  - Only `processing.l1_time_range` (and later QC narrative) is set by a human, after inspecting L0. `--regenerate` refreshes the OGDB-derived block only.
+  - The `netcdf_variables` block stays repo-side (pyglider config schema, keyed by sensor model) — OGDB is not asked to model it.
+- **Pending OGDB schema additions** (do not block starting `resolve()`): `missions.summary` (+ Add-Mission modal auto-fill); NVS C19 sea-area terms + a `mission_sea_names` junction (many-to-many, separate from `site`); NVS L22 device-model terms + `asset_sensor_details.l22_model_id`.
+- Downstream: `OGDB/scripts/ingest_slocum_mission.py` (already exists) reads the pyglider L2 and writes `missions` dates/track + sets `l1_file`/`l2_file`.
 
 ## NRT/Delayed-Mode Processing → ERDDAP
 - Output format: **OG1 NetCDF**
