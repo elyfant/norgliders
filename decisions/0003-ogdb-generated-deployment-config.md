@@ -2,7 +2,7 @@
 
 **Date:** 2026-09-08
 
-**Status:** accepted (implementation pending)
+**Status:** accepted — `resolve()` implemented 2026-09-09 (see below)
 
 ## Decision
 
@@ -145,6 +145,35 @@ The one genuine split is `netcdf_variables`: that block is pyglider's
 configuration format (CF names, `bar2dbar`, valid ranges), which changes with
 the pyglider version, not with the glider inventory. It stays as versioned code
 in the processing repo, driven by the sensor models OGDB reports.
+
+## Implementation status (2026-09-09)
+
+Built in `slocum_data_processing`:
+
+- `config/processing.toml` + `settings.load_settings()` — environment (data
+  root, cache dir, `DATABASE_URL`) and the `[facility]` CF constants. Env vars
+  and `config/processing.local.toml` (gitignored) override.
+- `processing/ogdb.py` — the read-only OGDB queries (mission row + FK joins;
+  recursive `asset_assignments` payload walk at `launch_date`; latest
+  `asset_{ct,do,eco}_sensor_cal`).
+- `processing/sensor_catalog.py` — the repo-side model→pyglider-variable map
+  (CTD / FLNTU / FLBBCD / Aanderaa 3835 / Aanderaa 4xxx) + the fixed nav and
+  profile-variable blocks.
+- `processing/config.py::resolve()` — assembles the deployment dict;
+  `write_deployment_yaml()` renders it with the provenance header and the
+  preserved `processing:` block.
+- CLI: `slocum-process-mission <N> --from-ogdb [--regenerate] [--generate-only]`.
+
+Verified: `resolve(28)` off a local OGDB snapshot (with a science-payload test
+fixture) generates a `deployment.yml` that produces **byte-identical L1 science
+data** to the hand-authored mission-028 config (`np.allclose` on temperature /
+salinity / chlorophyll / oxygen). `python/tests/test_sensor_catalog.py` +
+`test_resolve.py` cover it.
+
+**Still pending:** the 3 OGDB schema additions above; production access
+(`nrec_app` tunnel) so the payload half resolves for real missions — the local
+snapshot has no `asset_assignments` for the older gliders; retiring
+`python/missions/` once every active mission is generated.
 
 ## Supersedes / relates to
 
