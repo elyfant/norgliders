@@ -103,11 +103,11 @@ slocum-process-mission 28  [--regenerate] [--steps l0 | l1,l2 | ...]
 
 ## OGDB schema changes this requires
 
-| # | Change | Feeds `deployment.yml` |
-|---|---|---|
-| 1 | `missions.summary` (text). Auto-filled in the Add-Mission modal from `"{glider_model} {glider_name} delayed-mode dataset, {site}, {seas}, {launch_date:%Y %B}."`, with a "↻ regenerate" affordance and a note that it is auto-generated and editable. | `metadata.summary` |
-| 2 | Sea areas: a curated `nvs_terms` subset (collection **C19**, "Sea Areas") + a `mission_sea_names (mission_id, nvs_term_id)` junction — many-to-many, independent of the single-valued `site` (which need not be a sea). Multi-select in the Add-Mission modal. | `metadata.sea_name`, and `{seas}` in the summary template |
-| 3 | Populate NVS **L22** device-model terms in `nvs_terms` and set `asset_sensor_details.l22_model_id` for the CTD / FLNTU / optode models. *(Fiona is doing this.)* | `glider_devices.*.model` / `make_model` |
+| # | Change | Feeds `deployment.yml` | Status |
+|---|---|---|---|
+| 1 | `missions.summary` (text). Auto-filled in the Add-Mission modal from `"{glider_model} {glider_name} delayed-mode dataset, {site}, {seas}, {launch_date:%Y %B}."`, with a "↻ regenerate" affordance and a note that it is auto-generated and editable. | `metadata.summary` | **not started** — `resolve()` builds the summary string from the OGDB fields directly for now; no `missions.summary` column yet |
+| 2 | Sea areas: a curated `nvs_terms` subset (collection **C19**) + a `mission_sea_names (mission_id, c19_term_id)` junction — many-to-many, independent of the single-valued `site`. | `metadata.sea_name`, `{seas}` in the summary | **done** — migration `xxxx_mission_sea_names` (OGDB), 9 C19 terms in `nvs_terms.yaml`, `resolve()` reads them. Applied to ogdb-test; **production `alembic upgrade head` + backfill pending**. Multi-select in the Add-Mission modal: not built. C19-only (no free text) — finer sub-regions deferred. |
+| 3 | Populate NVS **L22** device-model terms in `nvs_terms` and set `asset_sensor_details.l22_model_id` for the CTD / FLNTU / optode models. | `glider_devices.*.model` / `make_model` | **done** — 6 L22 terms in `nvs_terms.yaml` and set for the gna sensors (verified via `resolve(2)` / `resolve(28)` against production) |
 | — | **Not needed:** `missions.comment` (dropped), any cal-certificate / `documents` wiring (`calibration_report` is a bare pointer — D6), a `factory_calibrated` column (derived — D7), a per-mission funding column (per-project — D5), a `netcdf_variables` model in OGDB (repo catalog — see below). |
 
 ## Repo changes this requires
