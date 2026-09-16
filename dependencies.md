@@ -3,7 +3,7 @@
 Explicit contracts between systems — file formats, paths, IDs, schemas that more than one repo relies on. When one side changes, check this file for what else breaks.
 
 ## OGDB ↔ NRT/Delayed-Mode Processing
-- **RESOLVED (2026-09-08, [decision 0003](decisions/0003-ogdb-generated-deployment-config.md)):** the pyglider `deployment.yml` is **generated from OGDB per processing run** and written into the mission's data folder (provenance-stamped). It is not hand-maintained in the repo. `slocum_data_processing.processing.config.resolve(mission_number)` is the generator.
+- **RESOLVED (2026-09-08, [decision 0003](decisions/0003-ogdb-generated-deployment-config.md)):** the pyglider `deployment.yml` is **generated from OGDB per processing run** and written into the mission's data folder (provenance-stamped). It is not hand-maintained in the repo. `norgliders_data_pipeline.processing.config.resolve(mission_number)` is the generator.
 - **Contract:**
   - The processing script locates the mission folder by globbing `<data-root>/<NNN>-*` (the mission-number prefix). `missions.internal_data_path` is **not** reliable for this (inconsistent / half-populated).
   - `resolve()` reads: `norglider_missions` + `missions` FK ids; `asset_glider_details` + `assets` + `platforms`/NVS B76; science payload via the recursive `asset_assignments` walk at `launch_date`; latest `asset_{ct,do,eco}_sensor_cal` ≤ `launch_date`; `projects.funder`/`fund_number`.
