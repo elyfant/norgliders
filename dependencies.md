@@ -21,6 +21,7 @@ Explicit contracts between systems — file formats, paths, IDs, schemas that mo
 - **Note — numbers are permanent, not chronological:** mission_number is never reassigned. Missions recovered from historical records later get the next free number, e.g. folders `100-sg629_ovens_greenland_Feb2018` and `101-sg559_ovens_greenland_Oct2017` (added 2026-10-02). So mission_number order is not launch-date order.
 
 ## NRT/Delayed-Mode Processing → ERDDAP
+- **Which file gets pushed (2026-10-07):** `norgliders-ERDDAP/ingest/ingest.py <mission_number> <L1|L2> <mission_slug>` asks OGDB (gateway `GET /missions`) for the mission by **`mission_number`** and pushes that level's **best file** from OGDB's `mission_best_files` view -- the best currently available, `BASESTATION` included; a better file later replaces it. Nobody types a path: OGDB stores it relative to the shared projects folder, and the script's `config.json` `projectsRoot` says where that's mounted. On the ERDDAP server it lands as **`<remoteBasePath>/<level>/<mission_slug>/<mission_slug>_<level>.nc`** -- a fixed name, so a newer file replaces the old one atomically; ERDDAP datasets.d fragments must match that name. `--confirm-live` records the push in OGDB **linked to the processing run whose file was sent** (`erddap_pushes.processing_run_id`); `mission_erddap_status.is_current` shows where a better file is waiting to be pushed.
 - Output format: **OG1 NetCDF**
 - Expected file landing path on ERDDAP server: **TBD**
 - Dataset registration (ERDDAP XML config) — manual or scripted?
